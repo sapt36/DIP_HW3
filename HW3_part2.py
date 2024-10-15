@@ -26,10 +26,15 @@ class SpatialFilteringApp(QMainWindow):
 
         self.maskSizeLabel = QLabel('Mask Size:')
         self.maskSizeInput = QSpinBox()
-        self.maskSizeInput.setRange(3, 9)
+        self.maskSizeInput.setRange(3, 21)  # 修改範圍 3 到 21
         self.maskSizeInput.setSingleStep(2)
         self.maskSizeInput.setValue(3)
         self.maskSizeInput.valueChanged.connect(self.update_mask_inputs)
+
+        # 新增標準差輸入框
+        self.sigmaLabel = QLabel('Gaussian Sigma:')
+        self.sigmaInput = QLineEdit('Auto')  # 默認為 "Auto"，可手動設置
+        self.sigmaInput.setPlaceholderText("Enter sigma value")
 
         self.averagingLabel = QLabel('Averaging Value:')
         self.averagingInput = QLineEdit('1')
@@ -46,6 +51,10 @@ class SpatialFilteringApp(QMainWindow):
         topLayout.addWidget(self.maskTypeCombo)
         topLayout.addWidget(self.maskSizeLabel)
         topLayout.addWidget(self.maskSizeInput)
+
+        # 將標準差輸入框加到布局中
+        topLayout.addWidget(self.sigmaLabel)
+        topLayout.addWidget(self.sigmaInput)
 
         layout = QVBoxLayout()
         layout.addWidget(self.loadButton)
@@ -81,7 +90,7 @@ class SpatialFilteringApp(QMainWindow):
 
     def update_mask_inputs(self):
         mask_type = self.maskTypeCombo.currentText()
-        self.clear_mask_layout()  # Use function to clear UI components
+        self.clear_mask_layout()  # 清理 UI
         if mask_type == 'Other':
             self.averagingLabel.show()
             self.averagingInput.show()
@@ -108,6 +117,25 @@ class SpatialFilteringApp(QMainWindow):
             self.maskInputs.append(row)
 
     def apply_mask(self):
+
+        # 手動實現高斯核的函數，加入此處
+        def manual_gaussian_kernel(size, sigma=None):
+            if sigma is None:
+                sigma = size / 6  # 自動推導 sigma
+
+            kernel = np.zeros((size, size), np.float32)
+            center = size // 2
+            sum_val = 0  # 用於歸一化
+
+            for i in range(size):
+                for j in range(size):
+                    x, y = i - center, j - center
+                    kernel[i, j] = np.exp(-(x ** 2 + y ** 2) / (2 * sigma ** 2))
+                    sum_val += kernel[i, j]
+
+            kernel /= sum_val  # 正規化，使其總和為 1
+            return kernel
+
         if self.image is None:
             QMessageBox.warning(self, 'Warning', 'Please load an image first!')
             return
@@ -118,8 +146,18 @@ class SpatialFilteringApp(QMainWindow):
         if mask_type in ['Box', 'Smoothing']:
             mask = np.ones((mask_size, mask_size), np.float32) / (mask_size * mask_size)
         elif mask_type == 'Gaussian':
-            mask = cv2.getGaussianKernel(mask_size, 0)
-            mask = mask * mask.T
+            # 檢查用戶是否輸入了自定義標準差
+            sigma_text = self.sigmaInput.text()
+            if sigma_text == 'Auto' or sigma_text == '':
+                sigma = None  # 如果未設置，則使用默認的自動計算標準差
+            else:
+                try:
+                    sigma = float(sigma_text)
+                except ValueError:
+                    QMessageBox.warning(self, 'Warning', 'Please enter a valid sigma value!')
+                    return
+
+            mask = manual_gaussian_kernel(mask_size, sigma)  # 使用手動高斯核生成函數
         elif mask_type == 'Other':
             mask = self.get_custom_mask(mask_size)
             if mask is None:
