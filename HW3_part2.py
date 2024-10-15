@@ -4,7 +4,8 @@ import numpy as np
 import time
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QVBoxLayout, QGridLayout, QWidget, QPushButton,
                              QLineEdit, QFileDialog, QMessageBox, QSpinBox, QComboBox, QHBoxLayout, QScrollArea)
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QFont
+from PyQt5.QtCore import Qt
 
 class SpatialFilteringApp(QMainWindow):
     def __init__(self):
@@ -12,11 +13,12 @@ class SpatialFilteringApp(QMainWindow):
         self.image = None
         self.initUI()
 
-    from PyQt5.QtWidgets import QScrollArea  # 添加 QScrollArea
-
     def initUI(self):
         self.setWindowTitle('Spatial Filtering Operations')
-        self.setGeometry(100, 100, 1200, 800)
+        self.setGeometry(100, 100, 1200, 700)
+
+        # 設置字體
+        self.setFont(QFont('微軟正黑體', 12, QFont.Bold))
 
         # Load and Mask UI
         self.loadButton = QPushButton('Load Image')
@@ -24,7 +26,7 @@ class SpatialFilteringApp(QMainWindow):
 
         self.maskTypeLabel = QLabel('Mask Type:')
         self.maskTypeCombo = QComboBox()
-        self.maskTypeCombo.addItems(['Box(Smoothing)', 'Gaussian', 'Other'])
+        self.maskTypeCombo.addItems(['Box', 'Gaussian', 'Other'])
         self.maskTypeCombo.currentTextChanged.connect(self.update_mask_inputs)
 
         self.maskSizeLabel = QLabel('Mask Size:')
@@ -38,14 +40,26 @@ class SpatialFilteringApp(QMainWindow):
         self.sigmaInput = QLineEdit('Auto')
         self.sigmaInput.setPlaceholderText("Enter sigma value")
 
-        self.averagingLabel = QLabel('Averaging Value:')
+        # 隱藏的標籤和輸入欄位，僅當 Mask Type 為 Other 時顯示
+        self.averagingLabel = QLabel('Normalization factor of "Other" filter [ enter:9 == 1/9 ]:')
         self.averagingInput = QLineEdit('1')
+        self.averagingLabel.hide()  # 初始隱藏
+        self.averagingInput.hide()  # 初始隱藏
 
         self.applyButton = QPushButton('Apply Mask')
         self.applyButton.clicked.connect(self.apply_mask)
 
         self.imageLabel = QLabel()
         self.resultLabel = QLabel()
+
+        # 水平佈局來顯示原始圖像和處理後圖像
+        imageLayout = QHBoxLayout()
+        imageLayout.addWidget(QLabel('Original Image:'))
+        imageLayout.addWidget(self.imageLabel)
+        imageLayout.addWidget(QLabel('Processed Image:'))
+        imageLayout.addWidget(self.resultLabel)
+
+        imageLayout.setAlignment(Qt.AlignCenter)
 
         topLayout = QHBoxLayout()
         topLayout.addWidget(self.maskTypeLabel)
@@ -55,18 +69,18 @@ class SpatialFilteringApp(QMainWindow):
         topLayout.addWidget(self.sigmaLabel)
         topLayout.addWidget(self.sigmaInput)
 
+        averageLayout = QHBoxLayout()
+        averageLayout.addWidget(self.averagingLabel)
+        averageLayout.addWidget(self.averagingInput)
+
         layout = QVBoxLayout()
         layout.addWidget(self.loadButton)
         layout.addLayout(topLayout)
-        layout.addWidget(self.averagingLabel)
-        layout.addWidget(self.averagingInput)
+        layout.addLayout(averageLayout)
         self.maskLayout = QGridLayout()
         layout.addLayout(self.maskLayout)
         layout.addWidget(self.applyButton)
-        layout.addWidget(QLabel('Original Image:'))
-        layout.addWidget(self.imageLabel)
-        layout.addWidget(QLabel('Processed Image:'))
-        layout.addWidget(self.resultLabel)
+        layout.addLayout(imageLayout)  # 使用水平佈局來顯示圖像
 
         # 將容器放到 QScrollArea 中
         scrollArea = QScrollArea()  # 創建滾動區域
@@ -78,6 +92,16 @@ class SpatialFilteringApp(QMainWindow):
         scrollArea.setWidget(container)
 
         self.setCentralWidget(scrollArea)  # 將滾動區域作為主窗口的中心控件
+
+    def update_mask_inputs(self):
+        mask_type = self.maskTypeCombo.currentText()
+
+        if mask_type == 'Other':
+            self.averagingLabel.show()  # 顯示標籤
+            self.averagingInput.show()  # 顯示輸入欄位
+        else:
+            self.averagingLabel.hide()  # 隱藏標籤
+            self.averagingInput.hide()  # 隱藏輸入欄位
 
     def load_image(self):
         fileName, _ = QFileDialog.getOpenFileName(self, "Open Image", "", "Images (*.png *.jpg *.bmp);;All Files (*)")
@@ -177,7 +201,7 @@ class SpatialFilteringApp(QMainWindow):
         mask_size = self.maskSizeInput.value()
         mask_type = self.maskTypeCombo.currentText()
 
-        if mask_type == 'Box(Smoothing)':
+        if mask_type == 'Box':
             mask = np.ones((mask_size, mask_size), np.float32) / (mask_size * mask_size)
         elif mask_type == 'Gaussian':
             sigma_text = self.sigmaInput.text()
