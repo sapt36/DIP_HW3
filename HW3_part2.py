@@ -24,7 +24,7 @@ class SpatialFilteringApp(QMainWindow):
 
         self.maskTypeLabel = QLabel('Mask Type:')
         self.maskTypeCombo = QComboBox()
-        self.maskTypeCombo.addItems(['Box', 'Gaussian', 'Smoothing', 'Other'])
+        self.maskTypeCombo.addItems(['Box(Smoothing)', 'Gaussian', 'Other'])
         self.maskTypeCombo.currentTextChanged.connect(self.update_mask_inputs)
 
         self.maskSizeLabel = QLabel('Mask Size:')
@@ -147,8 +147,8 @@ class SpatialFilteringApp(QMainWindow):
             kernel_size = kernel.shape[0]
             pad = kernel_size // 2
 
-            # Zero-pad the image
-            padded_image = np.pad(image, ((pad, pad), (pad, pad)), mode='constant', constant_values=0)
+            # Use reflect padding (mirror the edges) instead of zero padding
+            padded_image = np.pad(image, ((pad, pad), (pad, pad)), mode='reflect')
 
             # Prepare the output filtered image
             filtered_image = np.zeros_like(image)
