@@ -2,7 +2,8 @@ import sys
 import cv2
 import numpy as np
 import time
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QVBoxLayout, QGridLayout, QWidget, QPushButton, QLineEdit, QFileDialog, QMessageBox, QSpinBox, QComboBox, QHBoxLayout)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QVBoxLayout, QGridLayout, QWidget, QPushButton,
+                             QLineEdit, QFileDialog, QMessageBox, QSpinBox, QComboBox, QHBoxLayout, QScrollArea)
 from PyQt5.QtGui import QImage, QPixmap
 
 class SpatialFilteringApp(QMainWindow):
@@ -11,9 +12,11 @@ class SpatialFilteringApp(QMainWindow):
         self.image = None
         self.initUI()
 
+    from PyQt5.QtWidgets import QScrollArea  # 添加 QScrollArea
+
     def initUI(self):
         self.setWindowTitle('Spatial Filtering Operations')
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 1200, 800)
 
         # Load and Mask UI
         self.loadButton = QPushButton('Load Image')
@@ -26,14 +29,13 @@ class SpatialFilteringApp(QMainWindow):
 
         self.maskSizeLabel = QLabel('Mask Size:')
         self.maskSizeInput = QSpinBox()
-        self.maskSizeInput.setRange(3, 21)  # 修改範圍 3 到 21
+        self.maskSizeInput.setRange(3, 21)
         self.maskSizeInput.setSingleStep(2)
         self.maskSizeInput.setValue(3)
         self.maskSizeInput.valueChanged.connect(self.update_mask_inputs)
 
-        # 新增標準差輸入框
         self.sigmaLabel = QLabel('Gaussian Sigma:')
-        self.sigmaInput = QLineEdit('Auto')  # 默認為 "Auto"，可手動設置
+        self.sigmaInput = QLineEdit('Auto')
         self.sigmaInput.setPlaceholderText("Enter sigma value")
 
         self.averagingLabel = QLabel('Averaging Value:')
@@ -45,14 +47,11 @@ class SpatialFilteringApp(QMainWindow):
         self.imageLabel = QLabel()
         self.resultLabel = QLabel()
 
-        # Layouts
         topLayout = QHBoxLayout()
         topLayout.addWidget(self.maskTypeLabel)
         topLayout.addWidget(self.maskTypeCombo)
         topLayout.addWidget(self.maskSizeLabel)
         topLayout.addWidget(self.maskSizeInput)
-
-        # 將標準差輸入框加到布局中
         topLayout.addWidget(self.sigmaLabel)
         topLayout.addWidget(self.sigmaInput)
 
@@ -69,11 +68,16 @@ class SpatialFilteringApp(QMainWindow):
         layout.addWidget(QLabel('Processed Image:'))
         layout.addWidget(self.resultLabel)
 
+        # 將容器放到 QScrollArea 中
+        scrollArea = QScrollArea()  # 創建滾動區域
+        scrollArea.setWidgetResizable(True)  # 使內容自動調整
         container = QWidget()
         container.setLayout(layout)
-        self.setCentralWidget(container)
 
-        self.update_mask_inputs()
+        # 將滾動區域的內容設置為 QWidget
+        scrollArea.setWidget(container)
+
+        self.setCentralWidget(scrollArea)  # 將滾動區域作為主窗口的中心控件
 
     def load_image(self):
         fileName, _ = QFileDialog.getOpenFileName(self, "Open Image", "", "Images (*.png *.jpg *.bmp);;All Files (*)")
@@ -118,7 +122,7 @@ class SpatialFilteringApp(QMainWindow):
 
     def apply_mask(self):
 
-        # 手動實現高斯核的函數，加入此處
+        # 手動實現高斯核函數
         def manual_gaussian_kernel(size, sigma=None):
             if sigma is None:
                 sigma = size / 6  # 自動推導 sigma
@@ -136,6 +140,36 @@ class SpatialFilteringApp(QMainWindow):
             kernel /= sum_val  # 正規化，使其總和為 1
             return kernel
 
+        # 手動實現卷積函數
+        def manual_filter2D(image, kernel):
+            # Get image and kernel dimensions
+            image_height, image_width = image.shape
+            kernel_size = kernel.shape[0]
+            pad = kernel_size // 2
+
+            # Zero-pad the image
+            padded_image = np.pad(image, ((pad, pad), (pad, pad)), mode='constant', constant_values=0)
+
+            # Prepare the output filtered image
+            filtered_image = np.zeros_like(image)
+
+            # Perform convolution (2D filtering)
+            for i in range(image_height):
+                for j in range(image_width):
+                    # Extract the region of interest (ROI)
+                    roi = padded_image[i:i + kernel_size, j:j + kernel_size]
+
+                    # Perform element-wise multiplication and sum the result
+                    filtered_value = np.sum(roi * kernel)
+
+                    # Assign the result to the filtered image
+                    filtered_image[i, j] = filtered_value
+
+            # Clip the values to be in the valid range [0, 255] for grayscale images
+            filtered_image = np.clip(filtered_image, 0, 255)
+
+            return filtered_image.astype(np.uint8)
+
         if self.image is None:
             QMessageBox.warning(self, 'Warning', 'Please load an image first!')
             return
@@ -143,10 +177,9 @@ class SpatialFilteringApp(QMainWindow):
         mask_size = self.maskSizeInput.value()
         mask_type = self.maskTypeCombo.currentText()
 
-        if mask_type in ['Box', 'Smoothing']:
+        if mask_type == 'Box(Smoothing)':
             mask = np.ones((mask_size, mask_size), np.float32) / (mask_size * mask_size)
         elif mask_type == 'Gaussian':
-            # 檢查用戶是否輸入了自定義標準差
             sigma_text = self.sigmaInput.text()
             if sigma_text == 'Auto' or sigma_text == '':
                 sigma = None  # 如果未設置，則使用默認的自動計算標準差
@@ -164,7 +197,9 @@ class SpatialFilteringApp(QMainWindow):
                 return
 
         start_time = time.time()
-        filtered_image = cv2.filter2D(self.image, -1, mask)
+
+        filtered_image = manual_filter2D(self.image, mask)
+
         end_time = time.time()
 
         self.show_image(filtered_image, self.resultLabel)
