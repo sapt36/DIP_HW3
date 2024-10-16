@@ -15,7 +15,7 @@ class SpatialFilteringApp(QWidget):
 
     def initUI(self):
         self.setWindowTitle('Spatial Filtering Operations')
-        self.setGeometry(100, 100, 1200, 700)
+        self.setGeometry(100, 100, 1200, 800)
 
         # 設置字體
         self.setFont(QFont('微軟正黑體', 12, QFont.Bold))
@@ -246,7 +246,7 @@ class EdgeDetectionApp(QWidget):
 
     def initUI(self):
         self.setWindowTitle('邊緣檢測：Marr-Hildreth 和 Sobel')
-        self.setGeometry(100, 100, 1200, 700)
+        self.setGeometry(100, 100, 1200, 800)
 
         # 設置字體
         self.setFont(QFont('微軟正黑體', 12, QFont.Bold))
@@ -436,40 +436,50 @@ class LocalEnhancementApp(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle('Local Enhancement Method')
-        self.setGeometry(100, 100, 1200, 700)
+        self.setWindowTitle('局部增強方法')
+        self.setGeometry(100, 100, 1200, 800)
 
         # 設置字體
         self.setFont(QFont('微軟正黑體', 12, QFont.Bold))
 
-        # Buttons and controls
-        self.loadButton = QPushButton('Load Image')
+        # 按鈕和輸入欄位
+        self.loadButton = QPushButton('載入影像')
         self.loadButton.clicked.connect(self.load_image)
 
-        self.neighborhoodSizeLabel = QLabel('Neighborhood Size (Sxy):')
+        self.neighborhoodSizeLabel = QLabel('鄰域大小 (Sxy):')
         self.neighborhoodSizeSpinBox = QSpinBox()
         self.neighborhoodSizeSpinBox.setRange(1, 20)
         self.neighborhoodSizeSpinBox.setValue(3)
 
-        self.applyLocalButton = QPushButton('Apply Local Enhancement')
+        self.applyLocalButton = QPushButton('套用局部增強')
         self.applyLocalButton.clicked.connect(self.apply_local_enhancement)
 
-        self.applyHistButton = QPushButton('Apply Histogram Equalization')
+        self.applyHistButton = QPushButton('套用直方圖均衡化')
         self.applyHistButton.clicked.connect(self.apply_histogram_equalization)
 
         self.imageLabel = QLabel()
-        self.resultLabel = QLabel()
+        self.localResultLabel = QLabel()  # 局部增強結果顯示
+        self.histEqualizationResultLabel = QLabel()  # 直方圖均衡化結果顯示
+
+        imageLayout = QHBoxLayout()
+        imageLayout.addWidget(QLabel('原始影像:'))
+        imageLayout.addWidget(self.imageLabel)
+        imageLayout.addWidget(QLabel('局部增強結果:'))
+        imageLayout.addWidget(self.localResultLabel)
+        imageLayout.addWidget(QLabel('均衡化結果:'))
+        imageLayout.addWidget(self.histEqualizationResultLabel)
+        imageLayout.setAlignment(Qt.AlignCenter)
+
+        SXYLayout = QHBoxLayout()
+        SXYLayout.addWidget(self.neighborhoodSizeLabel)
+        SXYLayout.addWidget(self.neighborhoodSizeSpinBox)
 
         layout = QVBoxLayout()
         layout.addWidget(self.loadButton)
-        layout.addWidget(self.neighborhoodSizeLabel)
-        layout.addWidget(self.neighborhoodSizeSpinBox)
+        layout.addLayout(SXYLayout)
         layout.addWidget(self.applyLocalButton)
         layout.addWidget(self.applyHistButton)
-        layout.addWidget(QLabel('Original Image:'))
-        layout.addWidget(self.imageLabel)
-        layout.addWidget(QLabel('Processed Image:'))
-        layout.addWidget(self.resultLabel)
+        layout.addLayout(imageLayout)
 
         # 設置滾動區域
         scrollArea = QScrollArea()
@@ -492,7 +502,7 @@ class LocalEnhancementApp(QWidget):
         bytesPerLine = width
         qimage = QImage(image.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
         pixmap = QPixmap.fromImage(qimage)
-        label.setPixmap(pixmap.scaled(label.size(), Qt.KeepAspectRatio))
+        label.setPixmap(pixmap.scaled(256, 256, Qt.KeepAspectRatio))
 
     def apply_local_enhancement(self):
         if self.image is None:
@@ -500,14 +510,14 @@ class LocalEnhancementApp(QWidget):
 
         neighborhood_size = self.neighborhoodSizeSpinBox.value()
         result_image = self.local_enhancement(self.image, neighborhood_size)
-        self.show_image(result_image, self.resultLabel)
+        self.show_image(result_image, self.localResultLabel)
 
     def apply_histogram_equalization(self):
         if self.image is None:
             return
 
         result_image = cv2.equalizeHist(self.image)
-        self.show_image(result_image, self.resultLabel)
+        self.show_image(result_image, self.histEqualizationResultLabel)
 
     def local_enhancement(self, image, sxy):
         image_float = image.astype(np.float32)
@@ -525,7 +535,7 @@ class LocalEnhancementApp(QWidget):
         result_image = np.clip(result_image, 0, 255).astype(np.uint8)
         return result_image
 
-# 主視窗使用分頁選項 (Main Window Tab Setup)
+# 主視窗使用分頁選項
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -533,7 +543,7 @@ class MainWindow(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle('Digital Image Processing HW3')
-        self.setGeometry(100, 100, 1200, 800)
+        self.setGeometry(100, 100, 1200, 900)
 
         # 創建分頁
         self.tabs = QTabWidget()
