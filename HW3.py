@@ -100,6 +100,7 @@ class SpatialFilteringApp(QWidget):
         self.setLayout(QVBoxLayout())  # 清空主界面
         self.layout().addWidget(scrollArea)  # 將滾動區域添加到主界面
 
+    # 控制高斯sigma值的輸入欄位顯示
     def update_sigma_inputs(self):
         mask_type = self.maskTypeCombo.currentText()
         if mask_type == 'Gaussian':
@@ -109,6 +110,7 @@ class SpatialFilteringApp(QWidget):
             self.sigmaLabel.hide()
             self.sigmaInput.hide()
 
+    # 控制自定義遮罩的輸入欄位顯示
     def update_mask_inputs(self):
         mask_type = self.maskTypeCombo.currentText()
         self.clear_mask_layout()  # 清理 UI
@@ -149,9 +151,8 @@ class SpatialFilteringApp(QWidget):
                 self.maskLayout.addWidget(lineEdit, i, j)
                 row.append(lineEdit)
             self.maskInputs.append(row)
-
+    # 套用遮罩
     def apply_mask(self):
-
         def manual_gaussian_kernel(size, sigma=None):
             if sigma is None:
                 sigma = size / 6  # 自動推導 sigma
@@ -169,6 +170,7 @@ class SpatialFilteringApp(QWidget):
             kernel /= sum_val  # 正規化，使其總和為 1
             return kernel
 
+        # 手動實作 2D 卷積
         def manual_filter2D(image, kernel):
             image_height, image_width = image.shape
             kernel_size = kernel.shape[0]
@@ -303,6 +305,7 @@ class EdgeDetectionApp(QWidget):
         self.setLayout(QVBoxLayout())  # 清空主界面
         self.layout().addWidget(scrollArea)  # 將滾動區域添加到主界面
 
+    # 控制 Marr-Hildreth 方法的零交叉閾值輸入欄位顯示
     def update_method_layout(self):
         method = self.edgeMethodCombo.currentText()
 
@@ -328,7 +331,7 @@ class EdgeDetectionApp(QWidget):
         pixmap = QPixmap.fromImage(qimage)
         label.setPixmap(pixmap.scaled(256, 256))
 
-    # 影像處理主邏輯
+    # 影像處理主邏輯(應用邊緣檢測)
     def apply_edge_detection(self):
         if self.image is None:
             QMessageBox.warning(self, '警告', '請先載入影像！')
