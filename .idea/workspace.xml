@@ -4,18 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cfa2cbc9-a17d-4bd0-bacf-19e2b2e9dd59" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/DIP_HW3.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HW3_part2_v2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HW3_part3.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HW3_part4.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/input.JPG" afterDir="false" />
+    <list default="true" id="cfa2cbc9-a17d-4bd0-bacf-19e2b2e9dd59" name="Changes" comment="feat. update HW3_part4.py">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HW3_part3.py" beforeDir="false" afterPath="$PROJECT_DIR$/HW3_part3.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +22,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
@@ -62,6 +56,9 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\853uj\PyCharmProject\DIP_HW3" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\853uj\PyCharmProject\DIP_HW3" />
+    </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -79,7 +76,107 @@
       <option name="presentableId" value="Default" />
       <updated>1728209383592</updated>
     </task>
+    <task id="LOCAL-00001" summary="Initial Commit">
+      <option name="closed" value="true" />
+      <created>1728971384698</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1728971384698</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat. extend mask size to 21*21 and manual gaussian kernel">
+      <option name="closed" value="true" />
+      <created>1728972795492</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1728972795492</updated>
+    </task>
+    <task id="LOCAL-00003" summary="feat. manual convolution function and fix the UI">
+      <option name="closed" value="true" />
+      <created>1728973719544</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1728973719544</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fix. manual convolution function border effect&#10;(use reflect padding)">
+      <option name="closed" value="true" />
+      <created>1728975373548</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1728975373548</updated>
+    </task>
+    <task id="LOCAL-00005" summary="fix. center the UI image result and align the UI">
+      <option name="closed" value="true" />
+      <created>1728980657932</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1728980657932</updated>
+    </task>
+    <task id="LOCAL-00006" summary="feat. use tab to compose three part of code">
+      <option name="closed" value="true" />
+      <created>1728984521662</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1728984521662</updated>
+    </task>
+    <task id="LOCAL-00007" summary="feat. update marr hildreth edge detection to no CV2&#10;and set UI to chinese and QWidget">
+      <option name="closed" value="true" />
+      <created>1729035627905</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1729035627905</updated>
+    </task>
+    <task id="LOCAL-00008" summary="feat. update HW3_part2.py">
+      <option name="closed" value="true" />
+      <created>1729035648426</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1729035648426</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fix. image result by setPixmap() and change the tab3 language to chinese">
+      <option name="closed" value="true" />
+      <created>1729040025849</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1729040025849</updated>
+    </task>
+    <task id="LOCAL-00010" summary="feat. add image.JPG*6 for testing program">
+      <option name="closed" value="true" />
+      <created>1729040071481</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1729040071481</updated>
+    </task>
+    <task id="LOCAL-00011" summary="feat. add local_histogram_statistics() and show the result at UI">
+      <option name="closed" value="true" />
+      <created>1729043985459</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1729043985459</updated>
+    </task>
+    <task id="LOCAL-00012" summary="feat. update HW3_part4.py">
+      <option name="closed" value="true" />
+      <created>1729044001516</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1729044001516</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.qss" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -91,5 +188,20 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial Commit" />
+    <MESSAGE value="feat. extend mask size to 21*21 and manual gaussian kernel" />
+    <MESSAGE value="feat. manual convolution function and fix the UI" />
+    <MESSAGE value="fix. manual convolution function border effect&#10;(use reflect padding)" />
+    <MESSAGE value="fix. center the UI image result and align the UI" />
+    <MESSAGE value="feat. use tab to compose three part of code" />
+    <MESSAGE value="feat. update marr hildreth edge detection to no CV2&#10;and set UI to chinese and QWidget" />
+    <MESSAGE value="feat. update HW3_part2.py" />
+    <MESSAGE value="fix. image result by setPixmap() and change the tab3 language to chinese" />
+    <MESSAGE value="feat. add image.JPG*6 for testing program" />
+    <MESSAGE value="feat. add local_histogram_statistics() and show the result at UI" />
+    <MESSAGE value="feat. update HW3_part4.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat. update HW3_part4.py" />
   </component>
 </project>
